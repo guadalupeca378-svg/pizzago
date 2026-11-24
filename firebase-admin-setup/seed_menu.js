@@ -118,8 +118,10 @@ async function main() {
     }
   }
 
-  await writeCollection(db, FieldValue, "pizzas", menu.pizzas);
-  await writeCollection(db, FieldValue, "extras", menu.extras);
+  // `order` conserva el orden de menu.json: Firestore devuelve los documentos por id.
+  const withOrder = (list) => list.map((doc, order) => ({ ...doc, order }));
+  await writeCollection(db, FieldValue, "pizzas", withOrder(menu.pizzas));
+  await writeCollection(db, FieldValue, "extras", withOrder(menu.extras));
   console.log(`✔ Firestore actualizado: pizzas (${menu.pizzas.length}) y extras (${menu.extras.length}).`);
 }
 
