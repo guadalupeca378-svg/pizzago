@@ -3,7 +3,7 @@
 // y cargue más rápido en las visitas siguientes.
 
 // Cambiar este nombre en cada versión para que se descarte la caché anterior.
-const CACHE = 'pizzago-v1.1.0';
+const CACHE = 'pizzago-v1.2.0';
 
 // Lo mínimo para que la aplicación arranque sin internet.
 const ESENCIALES = [
@@ -54,16 +54,21 @@ self.addEventListener('fetch', (event) => {
   if (new URL(req.url).origin !== self.location.origin) return;
 
   // Páginas: primero la red para ver siempre la versión nueva;
-  // sin conexión, la copia guardada.
+  // sin conexión, la copia guardada. Las del menú generado en el servidor
+  // (/menu/...) se guardan con su propia dirección; las demás son la aplicación.
   if (req.mode === 'navigate') {
+    const esMenuServidor = new URL(req.url).pathname.startsWith('/menu');
+    const clave = esMenuServidor ? req : 'index.html';
     event.respondWith(
       fetch(req)
         .then((res) => {
-          const copia = res.clone();
-          caches.open(CACHE).then((cache) => cache.put('index.html', copia));
+          if (res.ok) {
+            const copia = res.clone();
+            caches.open(CACHE).then((cache) => cache.put(clave, copia));
+          }
           return res;
         })
-        .catch(() => caches.match('index.html')),
+        .catch(async () => (await caches.match(clave)) || caches.match('index.html')),
     );
     return;
   }
@@ -79,6 +84,23 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(() => guardada);
       return guardada || deRed;
+    }),
+  );
+});
+
+// Al tocar un aviso del pedido se enfoca PizzaGo si ya está abierta
+// y se lleva a la pantalla del pedido; si no, se abre.
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = new URL((event.notification.data && event.notification.data.url) || '/', self.location.origin).href;
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((ventanas) => {
+      for (const v of ventanas) {
+        if (new URL(v.url).origin === self.location.origin && 'focus' in v) {
+          return v.navigate(url).then((nv) => (nv || v).focus());
+        }
+      }
+      return self.clients.openWindow(url);
     }),
   );
 });
