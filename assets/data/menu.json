@@ -1,0 +1,276 @@
+{
+  "pizzas": [
+    {
+      "id": "pepperoni",
+      "name": "Pepperoni",
+      "description": "La favorita de siempre: salsa de tomate casera, mozzarella fundida y abundante pepperoni dorado al horno.",
+      "basePrice": 159,
+      "category": "clasicas",
+      "rating": 4.8,
+      "prepMinutes": 18,
+      "ingredients": ["Salsa de tomate", "Mozzarella", "Pepperoni", "Orégano"],
+      "isPopular": true,
+      "isSpicy": false,
+      "isVeggie": false
+    },
+    {
+      "id": "hawaiana",
+      "name": "Hawaiana",
+      "description": "Jamón de pierna y piña asada sobre mozzarella. Dulce, salada y sin pedir disculpas.",
+      "basePrice": 169,
+      "category": "clasicas",
+      "rating": 4.5,
+      "prepMinutes": 18,
+      "ingredients": ["Salsa de tomate", "Mozzarella", "Jamón", "Piña"],
+      "isPopular": true,
+      "isSpicy": false,
+      "isVeggie": false
+    },
+    {
+      "id": "margarita",
+      "name": "Margarita",
+      "description": "Tomate, mozzarella fresca y albahaca. Sencilla y perfecta.",
+      "basePrice": 149,
+      "category": "clasicas",
+      "rating": 4.6,
+      "prepMinutes": 15,
+      "ingredients": ["Salsa de tomate", "Mozzarella fresca", "Albahaca", "Aceite de oliva"],
+      "isPopular": false,
+      "isSpicy": false,
+      "isVeggie": true
+    },
+    {
+      "id": "mexicana",
+      "name": "Mexicana",
+      "description": "Chorizo, frijol, cebolla morada y jalapeño con un toque de cilantro fresco.",
+      "basePrice": 179,
+      "category": "clasicas",
+      "rating": 4.7,
+      "prepMinutes": 20,
+      "ingredients": ["Frijol refrito", "Mozzarella", "Chorizo", "Cebolla morada", "Jalapeño", "Cilantro"],
+      "isPopular": true,
+      "isSpicy": true,
+      "isVeggie": false
+    },
+    {
+      "id": "cuatro-quesos",
+      "name": "Cuatro quesos",
+      "description": "Mozzarella, gouda, parmesano y queso azul sobre una base cremosa.",
+      "basePrice": 189,
+      "category": "clasicas",
+      "rating": 4.6,
+      "prepMinutes": 17,
+      "ingredients": ["Mozzarella", "Gouda", "Parmesano", "Queso azul"],
+      "isPopular": false,
+      "isSpicy": false,
+      "isVeggie": true
+    },
+    {
+      "id": "suprema",
+      "name": "Suprema",
+      "description": "Pepperoni, salchicha italiana, pimiento, cebolla, champiñón y aceituna negra. De todo un poco.",
+      "basePrice": 199,
+      "category": "especiales",
+      "rating": 4.8,
+      "prepMinutes": 22,
+      "ingredients": ["Pepperoni", "Salchicha italiana", "Pimiento", "Cebolla", "Champiñón", "Aceituna negra"],
+      "isPopular": true,
+      "isSpicy": false,
+      "isVeggie": false
+    },
+    {
+      "id": "carnes-frias",
+      "name": "Carnes frías",
+      "description": "Pepperoni, jamón, tocino y salchicha italiana para los que vienen con hambre.",
+      "basePrice": 209,
+      "category": "especiales",
+      "rating": 4.7,
+      "prepMinutes": 22,
+      "ingredients": ["Pepperoni", "Jamón", "Tocino", "Salchicha italiana", "Mozzarella"],
+      "isPopular": false,
+      "isSpicy": false,
+      "isVeggie": false
+    },
+    {
+      "id": "bbq-pollo",
+      "name": "BBQ Pollo",
+      "description": "Pollo a la parrilla, salsa barbecue ahumada, cebolla morada y cilantro.",
+      "basePrice": 199,
+      "category": "especiales",
+      "rating": 4.6,
+      "prepMinutes": 20,
+      "ingredients": ["Salsa BBQ", "Mozzarella", "Pollo", "Cebolla morada", "Cilantro"],
+      "isPopular": false,
+      "isSpicy": false,
+      "isVeggie": false
+    },
+    {
+      "id": "diabla",
+      "name": "Diabla",
+      "description": "Salsa picante de chipotle, pepperoni, chorizo y jalapeño. Solo para valientes.",
+      "basePrice": 209,
+      "category": "especiales",
+      "rating": 4.5,
+      "prepMinutes": 20,
+      "ingredients": ["Salsa de chipotle", "Mozzarella", "Pepperoni", "Chorizo", "Jalapeño"],
+      "isPopular": false,
+      "isSpicy": true,
+      "isVeggie": false
+    },
+    {
+      "id": "vegetariana",
+      "name": "Vegetariana",
+      "description": "Brócoli, pimiento, cebolla, champiñón, elote y aceituna sobre mozzarella.",
+      "basePrice": 179,
+      "category": "vegetarianas",
+      "rating": 4.4,
+      "prepMinutes": 18,
+      "ingredients": ["Brócoli", "Pimiento", "Cebolla", "Champiñón", "Elote", "Aceituna"],
+      "isPopular": false,
+      "isSpicy": false,
+      "isVeggie": true
+    },
+    {
+      "id": "champinones",
+      "name": "Champiñones al ajo",
+      "description": "Champiñones salteados con ajo y perejil, mozzarella y un toque de parmesano.",
+      "basePrice": 169,
+      "category": "vegetarianas",
+      "rating": 4.5,
+      "prepMinutes": 17,
+      "ingredients": ["Champiñón", "Ajo", "Perejil", "Mozzarella", "Parmesano"],
+      "isPopular": false,
+      "isSpicy": false,
+      "isVeggie": true
+    },
+    {
+      "id": "mediterranea",
+      "name": "Mediterránea",
+      "description": "Jitomate deshidratado, aceituna kalamata, espinaca y queso feta.",
+      "basePrice": 189,
+      "category": "vegetarianas",
+      "rating": 4.6,
+      "prepMinutes": 18,
+      "ingredients": ["Jitomate deshidratado", "Aceituna kalamata", "Espinaca", "Queso feta"],
+      "isPopular": false,
+      "isSpicy": false,
+      "isVeggie": true
+    },
+    {
+      "id": "refresco",
+      "name": "Refresco 600 ml",
+      "description": "Refresco de cola, naranja o limón bien frío.",
+      "basePrice": 35,
+      "category": "bebidas",
+      "rating": 4.7,
+      "prepMinutes": 1,
+      "ingredients": [],
+      "isPopular": false,
+      "isSpicy": false,
+      "isVeggie": true
+    },
+    {
+      "id": "horchata",
+      "name": "Agua de horchata",
+      "description": "Agua fresca de arroz con canela, preparada en casa. 500 ml.",
+      "basePrice": 30,
+      "category": "bebidas",
+      "rating": 4.8,
+      "prepMinutes": 1,
+      "ingredients": [],
+      "isPopular": false,
+      "isSpicy": false,
+      "isVeggie": true
+    },
+    {
+      "id": "limonada",
+      "name": "Limonada mineral",
+      "description": "Limón recién exprimido con agua mineral. 500 ml.",
+      "basePrice": 38,
+      "category": "bebidas",
+      "rating": 4.6,
+      "prepMinutes": 2,
+      "ingredients": [],
+      "isPopular": false,
+      "isSpicy": false,
+      "isVeggie": true
+    },
+    {
+      "id": "brownie",
+      "name": "Brownie con nuez",
+      "description": "Brownie de chocolate amargo con nuez, tibio y suave por dentro.",
+      "basePrice": 59,
+      "category": "postres",
+      "rating": 4.9,
+      "prepMinutes": 5,
+      "ingredients": [],
+      "isPopular": true,
+      "isSpicy": false,
+      "isVeggie": true
+    },
+    {
+      "id": "roles-canela",
+      "name": "Roles de canela",
+      "description": "Seis bocados de masa horneada con canela y glaseado de vainilla.",
+      "basePrice": 69,
+      "category": "postres",
+      "rating": 4.7,
+      "prepMinutes": 8,
+      "ingredients": [],
+      "isPopular": false,
+      "isSpicy": false,
+      "isVeggie": true
+    },
+    {
+      "id": "pay-queso",
+      "name": "Pay de queso",
+      "description": "Rebanada de pay de queso horneado con mermelada de zarzamora.",
+      "basePrice": 65,
+      "category": "postres",
+      "rating": 4.8,
+      "prepMinutes": 3,
+      "ingredients": [],
+      "isPopular": false,
+      "isSpicy": false,
+      "isVeggie": true
+    }
+  ],
+  "extras": [
+    {
+      "id": "queso-extra",
+      "name": "Queso extra",
+      "price": 25,
+      "topping": "cheese"
+    },
+    {
+      "id": "pepperoni-extra",
+      "name": "Pepperoni extra",
+      "price": 30,
+      "topping": "pepperoni"
+    },
+    {
+      "id": "tocino",
+      "name": "Tocino",
+      "price": 30,
+      "topping": "bacon"
+    },
+    {
+      "id": "champinon",
+      "name": "Champiñón",
+      "price": 20,
+      "topping": "mushroom"
+    },
+    {
+      "id": "jalapeno",
+      "name": "Jalapeño",
+      "price": 15,
+      "topping": "jalapeno"
+    },
+    {
+      "id": "orilla-rellena",
+      "name": "Orilla rellena",
+      "price": 45,
+      "topping": "crust"
+    }
+  ]
+}

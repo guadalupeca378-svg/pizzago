@@ -55,3 +55,6 @@ firebase-admin-setup/node_modules/
 /evidencias/
 /tarea de desarrollo movil/
 /*.docx
+
+# Caché de Firebase CLI
+.firebase/
