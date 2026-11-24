@@ -1,7 +1,11 @@
 {
+  "firestore": {
+    "rules": "firestore.rules"
+  },
   "hosting": {
     "public": "build/web",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**", "**/*.symbols"],
+    "predeploy": ["npm --prefix firebase-admin-setup run render"],
     "rewrites": [
       { "source": "**", "destination": "/index.html" }
     ],
@@ -11,8 +15,12 @@
         "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }]
       },
       {
-        "source": "/@(index.html|sw.js|manifest.json|flutter_bootstrap.js)",
+        "source": "/@(index.html|sw.js|firebase-messaging-sw.js|manifest.json|flutter_bootstrap.js)",
         "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+      },
+      {
+        "source": "/menu/**",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=300" }]
       },
       {
         "source": "/sw.js",

@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://pizzago-874f4.web.app/sitemap.xml

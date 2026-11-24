@@ -1,0 +1,41 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Menú: cualquiera lo puede leer; solo el servidor (Admin SDK) lo modifica.
+    match /pizzas/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /extras/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Datos de cada navegador, identificado con su sesión anónima de Firebase.
+    match /usuarios/{uid} {
+      function esDueno() {
+        return request.auth != null && request.auth.uid == uid;
+      }
+
+      match /pedidos/{pedido} {
+        allow read: if esDueno();
+        allow create, update: if esDueno()
+          && request.resource.data.id == pedido
+          && request.resource.data.total is number
+          && request.resource.data.total >= 0
+          && request.resource.data.items is list
+          && request.resource.data.items.size() > 0
+          && request.resource.data.items.size() <= 50;
+        allow delete: if false;
+      }
+
+      // Identificador de Cloud Messaging de cada navegador, para mandarle push.
+      match /dispositivos/{fid} {
+        allow read, delete: if esDueno();
+        allow create, update: if esDueno() && request.resource.data.fid == fid;
+      }
+    }
+  }
+}

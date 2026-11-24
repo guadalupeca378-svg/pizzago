@@ -4,6 +4,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 import '../../../app/routes.dart';
+import '../../../core/platform/system_notifications.dart';
 import '../../../core/widgets/common.dart';
 import '../../../core/widgets/summary_card.dart';
 import '../../../core/widgets/surface_card.dart';
@@ -108,6 +109,19 @@ class OrderDetailScreen extends StatelessWidget {
                         title: Text(order.address),
                         subtitle: const Text('Dirección'),
                       ),
+                      if (order.location case final location?) ...[
+                        const Divider(indent: 56),
+                        ListTile(
+                          leading: const Icon(Symbols.my_location_rounded),
+                          title: Text(location.label),
+                          subtitle: const Text('Ubicación GPS'),
+                          trailing: IconButton(
+                            tooltip: 'Ver en el mapa',
+                            icon: const Icon(Symbols.map_rounded),
+                            onPressed: () => openExternal(location.mapUrl.toString()),
+                          ),
+                        ),
+                      ],
                       const Divider(indent: 56),
                       ListTile(
                         leading: const Icon(Symbols.phone_rounded),

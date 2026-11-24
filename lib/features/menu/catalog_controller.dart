@@ -32,6 +32,10 @@ class CatalogController extends ChangeNotifier {
   bool _loaded = false;
   String? _error;
   String _query = '';
+  MenuSource? _source;
+
+  /// De dónde salió el menú (Firestore, su copia sin conexión o el archivo local).
+  MenuSource? get source => _source;
 
   List<Pizza> get items => _items;
   List<Extra> get extras => _extras;
@@ -87,6 +91,7 @@ class CatalogController extends ChangeNotifier {
       final menu = await _repository.fetchMenu();
       _items = menu.items;
       _extras = menu.extras;
+      _source = menu.source;
       _loaded = true;
     } catch (e) {
       _error = 'No pudimos cargar el menú. Revisa tu conexión.';

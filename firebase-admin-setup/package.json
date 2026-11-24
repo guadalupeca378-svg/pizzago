@@ -1,13 +1,15 @@
 {
   "name": "firebase-admin-setup",
   "version": "1.0.0",
-  "description": "",
+  "description": "Herramientas de servidor de PizzaGo: carga del menú, vistas generadas en el servidor y envío de notificaciones push.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "seed": "node seed_menu.js",
     "seed:dry": "node seed_menu.js --dry-run",
-    "seed:clean": "node seed_menu.js --clean"
+    "seed:clean": "node seed_menu.js --clean",
+    "render": "node render_menu.js",
+    "reglas": "node publicar_reglas.js",
+    "promo": "node enviar_promo.js"
   },
   "keywords": [],
   "author": "",
