@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../data/models/app_user.dart';
 import '../../data/models/coupon.dart';
+import '../../data/models/delivery_location.dart';
 import '../../data/models/pizza_order.dart';
 import '../../data/repositories/order_repository.dart';
 import '../cart/cart_controller.dart';
@@ -81,6 +82,7 @@ class OrderController extends ChangeNotifier {
     required String phone,
     required PaymentMethod paymentMethod,
     String notes = '',
+    DeliveryLocation? location,
   }) async {
     final userId = _userId;
     if (userId == null || cart.isEmpty || _placing) return null;
@@ -105,6 +107,7 @@ class OrderController extends ChangeNotifier {
       paymentMethod: paymentMethod,
       notes: notes.trim(),
       couponCode: cart.coupon?.code,
+      location: location,
     );
 
     _placing = true;

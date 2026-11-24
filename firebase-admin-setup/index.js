@@ -1,9 +1,7 @@
-const admin = require("firebase-admin");
+const { initializeApp, cert } = require("firebase-admin/app");
 const serviceAccount = require("./serviceAccountKey.json");
 
-admin.initializeApp({
-  credential: admin.cert(serviceAccount),
-});
+initializeApp({ credential: cert(serviceAccount) });
 
 console.log("Firebase Admin SDK inicializado correctamente.");
 console.log("Proyecto conectado:", serviceAccount.project_id);

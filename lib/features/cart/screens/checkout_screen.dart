@@ -9,7 +9,9 @@ import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/common.dart';
 import '../../../core/widgets/form_fields.dart';
 import '../../../core/widgets/summary_card.dart';
+import '../../../data/models/delivery_location.dart';
 import '../../../data/models/pizza_order.dart';
+import '../../../data/services/location_service.dart';
 import '../../auth/auth_controller.dart';
 import '../../orders/order_controller.dart';
 import '../cart_controller.dart';
@@ -31,6 +33,24 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   PaymentMethod _payment = PaymentMethod.efectivo;
   bool _saveToProfile = true;
   bool _placed = false;
+  DeliveryLocation? _location;
+  bool _locating = false;
+
+  /// Toma la ubicación del GPS para que el repartidor llegue al punto exacto.
+  Future<void> _useMyLocation() async {
+    final messenger = ScaffoldMessenger.of(context);
+    setState(() => _locating = true);
+    try {
+      final location = await context.read<LocationService>().current();
+      if (mounted) setState(() => _location = location);
+    } on LocationException catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(e.message)));
+    } catch (e) {
+      messenger.showSnackBar(const SnackBar(content: Text('Tu dispositivo no pudo darnos la ubicación.')));
+    } finally {
+      if (mounted) setState(() => _locating = false);
+    }
+  }
 
   @override
   void initState() {
@@ -61,6 +81,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       phone: _phone.text,
       paymentMethod: _payment,
       notes: _notes.text,
+      location: _location,
     );
 
     if (order == null) {
@@ -108,7 +129,25 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             children: [
               const CheckoutStep(number: 1, title: '¿A dónde lo llevamos?'),
               AddressField(controller: _address, label: 'Dirección de entrega'),
-              const SizedBox(height: 12),
+              const SizedBox(height: 4),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: _location == null
+                    ? TextButton.icon(
+                        onPressed: _locating ? null : _useMyLocation,
+                        icon: _locating
+                            ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                            : const Icon(Symbols.my_location_rounded),
+                        label: Text(_locating ? 'Buscando tu ubicación…' : 'Usar mi ubicación'),
+                      )
+                    : InputChip(
+                        avatar: const Icon(Symbols.my_location_rounded, size: 18),
+                        label: Text('GPS: ${_location!.label}'),
+                        onDeleted: () => setState(() => _location = null),
+                        deleteButtonTooltipMessage: 'Quitar ubicación',
+                      ),
+              ),
+              const SizedBox(height: 8),
               PhoneField(controller: _phone),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,

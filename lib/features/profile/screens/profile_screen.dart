@@ -14,6 +14,7 @@ import '../../cart/cart_controller.dart';
 import '../../menu/catalog_controller.dart';
 import '../../menu/widgets/product_cards.dart';
 import '../../orders/order_controller.dart';
+import '../widgets/app_data_cards.dart';
 import '../widgets/edit_profile_sheet.dart';
 import '../widgets/stat_tile.dart';
 
@@ -157,6 +158,10 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
+            const SectionHeader('Notificaciones', padding: EdgeInsets.only(top: 28, bottom: 12)),
+            const NotificationsCard(),
+            const SectionHeader('Datos de la aplicación', padding: EdgeInsets.only(top: 28, bottom: 12)),
+            const AppDataCard(),
             const SectionHeader('Apariencia', padding: EdgeInsets.only(top: 28, bottom: 12)),
             SizedBox(
               width: double.infinity,
