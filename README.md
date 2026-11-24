@@ -1,8 +1,24 @@
 # PizzaGo
 
-Aplicación de pedidos para pizzería hecha con Flutter y Material 3.
-Por ahora funciona con datos locales; la capa de repositorios está lista para
-cambiarse a Firebase (Firestore y Auth).
+Aplicación web progresiva (PWA) de pedidos para una pizzería, hecha con
+Flutter y Material 3 y publicada en Firebase Hosting.
+
+**En línea:** <https://pizzago-874f4.web.app> · menú generado en el servidor:
+<https://pizzago-874f4.web.app/menu/>
+
+## Qué incluye
+
+| Función | Dónde está |
+| --- | --- |
+| Pantallas de Splash y Home | `lib/features/auth/screens/splash_screen.dart`, `lib/features/menu/screens/home_screen.dart` |
+| Vistas del lado del cliente | Toda la aplicación Flutter, que se dibuja en el navegador |
+| Vistas del lado del servidor | `firebase-admin-setup/render_menu.js`: genera `/menu/` y una página por producto con datos de Firestore antes de cada publicación |
+| Datos locales | Sesión, carrito, favoritos y pedidos en el navegador (`shared_preferences`) |
+| Datos remotos | Menú en Cloud Firestore y copia de los pedidos en `usuarios/{uid}/pedidos` (`lib/data/repositories/firestore_repositories.dart`) |
+| Datos sin conexión | Service worker propio (`web/sw.js`) y persistencia de Firestore en el navegador; si no hay red ni copia, el menú sale de `assets/data/menu.json` |
+| Notificaciones | Avisos del estado del pedido (`lib/features/notifications/`) y promociones push con Firebase Cloud Messaging (`web/firebase-messaging-sw.js`, `firebase-admin-setup/enviar_promo.js`) |
+| Elementos físicos del dispositivo | GPS: botón **Usar mi ubicación** en el pago (`lib/data/services/location_service.dart`) |
+| Instalación | `web/manifest.json` con íconos, capturas y accesos directos |
 
 ## Ejecutar
 
@@ -14,7 +30,20 @@ flutter run -d chrome
 Cuenta de demostración: botón **Usar cuenta de demostración** en el login
 (`demo@pizzago.com` / `pizzago123`, solo existe en local).
 
-Cupones de prueba: `PIZZAGO10` (10 %) y `BIENVENIDA` ($50).
+Cupones de prueba: `PIZZAGO10` (10 %) y `BIENVENIDA` ($50, solo el primer pedido).
+
+## Publicar
+
+```bash
+flutter build web --release --no-web-resources-cdn
+firebase deploy --only hosting
+```
+
+`--no-web-resources-cdn` deja el motor de dibujo en el propio sitio para que
+el service worker lo guarde y la aplicación abra sin conexión. Antes de subir,
+Firebase corre `npm --prefix firebase-admin-setup run render` y genera las
+vistas del servidor. Al cambiar la aplicación, sube el nombre de la caché en
+`web/sw.js`.
 
 ## Pruebas
 
@@ -25,66 +54,64 @@ flutter test
 
 ## Estructura de `lib/`
 
-Organizada por módulos: cada función de la app tiene su carpeta con su
+Organizada por módulos: cada función de la aplicación tiene su carpeta con su
 controlador, sus pantallas y sus widgets.
 
 ```
 lib/
-├── main.dart
+├── main.dart           arranca Firebase en web (o datos locales si no hay)
+├── firebase_options.dart
 ├── app/            PizzaGoApp y dependencias, router, rutas (AppRoutes), navegación
-├── core/           tema y modo oscuro, formateadores, validadores, widgets compartidos
+├── core/           tema, formateadores, validadores, widgets y platform/ (notificaciones del navegador)
 ├── data/
-│   ├── models/         Pizza, CartItem, Coupon, PizzaOrder, Promo, AppUser
-│   └── repositories/   contratos + versiones locales (menú, sesión, pedidos)
+│   ├── models/         Pizza, CartItem, Coupon, PizzaOrder, DeliveryLocation, Promo, AppUser
+│   ├── repositories/   menú, sesión y pedidos: versiones locales, de Firestore y combinadas
+│   └── services/       ubicación GPS y push de Cloud Messaging
 └── features/
-    ├── auth/       auth_controller · screens/ (splash, login, registro) · widgets/
-    ├── menu/       catalog_controller · screens/ (inicio, detalle) · widgets/
-    ├── cart/       cart_controller · screens/ (carrito, pago) · widgets/
-    ├── orders/     order_controller · screens/ (lista, detalle, confirmación) · widgets/
-    └── profile/    screens/ (perfil) · widgets/
+    ├── auth/           auth_controller · screens/ (splash, login, registro) · widgets/
+    ├── menu/           catalog_controller · screens/ (inicio, detalle) · widgets/
+    ├── cart/           cart_controller · screens/ (carrito, pago) · widgets/
+    ├── orders/         order_controller · screens/ (lista, detalle, confirmación) · widgets/
+    ├── notifications/  notification_controller (permiso, avisos del pedido, push)
+    └── profile/        screens/ (perfil) · widgets/
 ```
 
 Reglas que sigue el código:
 
 - Las pantallas solo hablan con controladores (`provider`); los
-  controladores hablan con repositorios. Para usar Firebase basta con otros
-  repositorios en `AppDependencies` (`lib/app/app.dart`).
+  controladores hablan con repositorios. Las fuentes de datos se eligen en
+  `AppDependencies` (`lib/app/app.dart`).
 - Las rutas salen de `AppRoutes` (`lib/app/routes.dart`), nunca se escriben
   a mano.
 - Un archivo por pantalla; los widgets que usa una sola función viven en su
   carpeta `widgets/`, y los que se usan en varias, en `core/widgets/`.
-
-El menú vive en `assets/data/menu.json`.
 
 ## Diseño
 
 - Superficies neutras con un solo color de acento (rojo tomate), tarjetas
   con sombra suave y radios de 12/16/24 px (`lib/core/theme/app_theme.dart`).
 - Tipografía Poppins con la escala de Material 3; DM Serif Display solo en
-  el logotipo (Google Fonts, licencia OFL en `assets/fonts/`).
-- Componentes estándar de Material 3: NavigationBar/NavigationRail, chips de
-  filtro, SegmentedButton, listas agrupadas y casillas de verificación.
-- Íconos: Material Symbols (*Rounded*), fuente variable; el ícono activo
-  anima su eje de relleno (`fill`).
+  el logotipo (licencia OFL en `assets/fonts/`).
+- Íconos: Material Symbols (*Rounded*); el ícono activo anima su relleno.
 - Movimiento (Material motion, paquete `animations`): *fade through* entre
   pestañas, *shared axis* en login/registro y pago, entrada escalonada de
-  tarjetas, esqueleto con brillo mientras carga, barra de categorías fija,
-  barra flotante del carrito, montos que cuentan y confeti al confirmar.
-- Accesibilidad: si el sistema tiene desactivados los efectos de animación
-  (`prefers-reduced-motion`), Flutter acorta las animaciones al 5 %.
-- Imágenes: fotografías reales de Wikimedia Commons con licencias libres
-  (CC BY, CC BY-SA y CC0), recortadas a 1200×900 en
-  `assets/images/products/<id>.jpg`. Autores y licencias en
-  `assets/images/CREDITOS.md`; si agregas un producto, agrega su foto con
-  el mismo `id` y su crédito.
-- Logotipo: monograma "P" dibujado con código (`AppLogo`), sin imagen.
+  tarjetas, esqueleto con brillo mientras carga y palomita animada al
+  confirmar el pedido.
+- Accesibilidad: si el sistema tiene desactivados los efectos de animación,
+  Flutter acorta las animaciones.
+- Imágenes: fotografías reales de Wikimedia Commons con licencias libres,
+  en `assets/images/products/<id>.jpg`. Autores y licencias en
+  `assets/images/CREDITOS.md`.
 
-## Firebase Admin SDK
+## Herramientas del servidor (`firebase-admin-setup/`)
 
-En `firebase-admin-setup/` (requiere `serviceAccountKey.json`, que **no** se
-comparte ni se sube a ningún repositorio):
+Requieren `serviceAccountKey.json`, que **no** se comparte ni se sube a
+ningún repositorio.
 
 ```bash
 npm run seed:dry    # valida menu.json sin conectarse
 npm run seed        # sube el menú a Firestore (colecciones pizzas y extras)
+npm run reglas      # publica firestore.rules
+npm run render      # genera las vistas del servidor en build/web/menu/
+npm run promo -- --titulo "2x1 los martes" --texto "Pide dos y paga una."
 ```
