@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import 'cart_item.dart';
+import 'delivery_location.dart';
 
 enum OrderStatus {
   recibido('Recibido', 'Recibimos tu pedido', Symbols.receipt_long_rounded),
@@ -44,6 +45,7 @@ class PizzaOrder {
     required this.paymentMethod,
     this.notes = '',
     this.couponCode,
+    this.location,
   });
 
   factory PizzaOrder.fromMap(Map<String, dynamic> map) => PizzaOrder(
@@ -60,6 +62,9 @@ class PizzaOrder {
     paymentMethod: PaymentMethod.fromName(map['paymentMethod'] as String),
     notes: map['notes'] as String? ?? '',
     couponCode: map['couponCode'] as String?,
+    location: map['location'] == null
+        ? null
+        : DeliveryLocation.fromMap(Map<String, dynamic>.from(map['location'] as Map)),
   );
 
   /// Tiempos simulados de cada etapa (minutos desde que se hizo el pedido).
@@ -81,6 +86,9 @@ class PizzaOrder {
   final PaymentMethod paymentMethod;
   final String notes;
   final String? couponCode;
+
+  /// Ubicación GPS que el cliente adjuntó al pedido (opcional).
+  final DeliveryLocation? location;
 
   int get itemCount => items.fold(0, (sum, i) => sum + i.quantity);
 
@@ -130,5 +138,6 @@ class PizzaOrder {
     'paymentMethod': paymentMethod.name,
     'notes': notes,
     'couponCode': couponCode,
+    if (location != null) 'location': location!.toMap(),
   };
 }
