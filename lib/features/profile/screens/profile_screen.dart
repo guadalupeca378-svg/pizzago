@@ -194,7 +194,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'PizzaGo 1.1.0',
+              'PizzaGo 1.2.0',
               textAlign: TextAlign.center,
               style: theme.textTheme.labelSmall?.copyWith(color: scheme.onSurfaceVariant),
             ),
