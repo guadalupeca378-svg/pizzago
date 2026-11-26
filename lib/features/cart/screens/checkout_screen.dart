@@ -11,6 +11,7 @@ import '../../../core/widgets/form_fields.dart';
 import '../../../core/widgets/summary_card.dart';
 import '../../../data/models/delivery_location.dart';
 import '../../../data/models/pizza_order.dart';
+import '../../../data/services/address_lookup_service.dart';
 import '../../../data/services/location_service.dart';
 import '../../auth/auth_controller.dart';
 import '../../orders/order_controller.dart';
@@ -36,13 +37,28 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   DeliveryLocation? _location;
   bool _locating = false;
 
-  /// Toma la ubicación del GPS para que el repartidor llegue al punto exacto.
+  /// Toma la ubicación del GPS para que el repartidor llegue al punto exacto
+  /// y, con OpenStreetMap, escribe la dirección de ese punto.
   Future<void> _useMyLocation() async {
     final messenger = ScaffoldMessenger.of(context);
+    final lookup = context.read<AddressLookupService?>();
     setState(() => _locating = true);
     try {
       final location = await context.read<LocationService>().current();
-      if (mounted) setState(() => _location = location);
+      if (!mounted) return;
+      setState(() => _location = location);
+      final found = await lookup?.addressFor(location);
+      if (!mounted || found == null || found == _address.text.trim()) return;
+      final previous = _address.text;
+      setState(() => _address.text = found);
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('Dirección de tu ubicación: $found'),
+          action: previous.trim().isEmpty
+              ? null
+              : SnackBarAction(label: 'Deshacer', onPressed: () => setState(() => _address.text = previous)),
+        ),
+      );
     } on LocationException catch (e) {
       messenger.showSnackBar(SnackBar(content: Text(e.message)));
     } catch (e) {

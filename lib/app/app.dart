@@ -14,9 +14,11 @@ import '../core/theme/theme_controller.dart';
 import '../core/widgets/product_image.dart';
 import '../data/models/pizza.dart';
 import '../data/repositories/auth_repository.dart';
+import '../data/repositories/firebase_auth_repository.dart';
 import '../data/repositories/firestore_repositories.dart';
 import '../data/repositories/menu_repository.dart';
 import '../data/repositories/order_repository.dart';
+import '../data/services/address_lookup_service.dart';
 import '../data/services/location_service.dart';
 import '../data/services/push_service.dart';
 import '../features/auth/auth_controller.dart';
@@ -39,6 +41,7 @@ class AppDependencies {
     this.notifications = const NoNotifications(),
     this.push,
     this.location = const DeviceLocationService(),
+    this.addressLookup,
     this.syncStatus,
     this.splashDuration = const Duration(milliseconds: 1200),
   });
@@ -48,25 +51,25 @@ class AppDependencies {
     menuRepository: LocalMenuRepository(),
     authRepository: LocalAuthRepository(prefs),
     orderRepository: LocalOrderRepository(prefs),
+    addressLookup: NominatimAddressService(),
   );
 
-  /// Menú desde Firestore (con copia sin conexión y respaldo local), pedidos
-  /// guardados en el dispositivo y copiados a Firestore, y notificaciones.
+  /// Cuentas con Firebase Authentication, menú desde Firestore (con copia sin
+  /// conexión y respaldo local), pedidos guardados en el dispositivo y
+  /// copiados a Firestore, y notificaciones.
   factory AppDependencies.firebase(SharedPreferences prefs) {
     final db = FirebaseFirestore.instance;
     final auth = FirebaseAuth.instance;
     final orders = SyncedOrderRepository(LocalOrderRepository(prefs), FirestoreOrderStore(db, auth));
     return AppDependencies(
       prefs: prefs,
-      menuRepository: FallbackMenuRepository(
-        FirestoreMenuRepository(db),
-        LocalMenuRepository(latency: Duration.zero),
-      ),
-      authRepository: LocalAuthRepository(prefs),
+      menuRepository: FallbackMenuRepository(FirestoreMenuRepository(db), LocalMenuRepository(latency: Duration.zero)),
+      authRepository: FirebaseAuthRepository(auth, db),
       orderRepository: orders,
       syncStatus: orders.status,
       notifications: SystemNotifications.platform(),
       push: FcmPushService(FirebaseMessaging.instance, db, auth, DefaultFirebaseOptions.vapidKey),
+      addressLookup: NominatimAddressService(),
     );
   }
 
@@ -77,6 +80,9 @@ class AppDependencies {
   final SystemNotifications notifications;
   final PushService? push;
   final LocationService location;
+
+  /// Dirección escrita a partir del GPS (null en las pruebas).
+  final AddressLookupService? addressLookup;
 
   /// Estado de la copia de pedidos en Firestore (null sin Firebase).
   final ValueListenable<SyncStatus>? syncStatus;
@@ -126,6 +132,7 @@ class _PizzaGoAppState extends State<PizzaGoApp> {
           update: (_, orders, notifications) => notifications!..watch(orders),
         ),
         Provider<LocationService>.value(value: deps.location),
+        Provider<AddressLookupService?>.value(value: deps.addressLookup),
         Provider<AppDependencies>.value(value: deps),
       ],
       child: Builder(
