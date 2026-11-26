@@ -127,6 +127,7 @@ ningún repositorio.
 npm run seed:dry    # valida menu.json sin conectarse
 npm run seed        # sube el menú a Firestore (colecciones pizzas y extras)
 npm run reglas      # publica firestore.rules
+npm run prueba:reglas  # prueba las reglas publicadas con dos cuentas temporales
 npm run render      # genera las vistas del servidor en build/web/menu/
 npm run promo -- --titulo "2x1 los martes" --texto "Pide dos y paga una."
 ```
