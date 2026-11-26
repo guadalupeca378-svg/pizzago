@@ -9,6 +9,7 @@
     "seed:clean": "node seed_menu.js --clean",
     "render": "node render_menu.js",
     "reglas": "node publicar_reglas.js",
+    "prueba:reglas": "node probar_reglas.js",
     "promo": "node enviar_promo.js"
   },
   "keywords": [],
