@@ -3,7 +3,7 @@
 // y cargue más rápido en las visitas siguientes.
 
 // Cambiar este nombre en cada versión para que se descarte la caché anterior.
-const CACHE = 'pizzago-v1.3.0';
+const CACHE = 'pizzago-v1.3.1';
 
 // Lo mínimo para que la aplicación arranque sin internet.
 const ESENCIALES = [
