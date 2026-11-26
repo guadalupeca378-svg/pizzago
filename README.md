@@ -19,6 +19,21 @@ Flutter y Material 3 y publicada en Firebase Hosting.
 | Notificaciones | Avisos del estado del pedido (`lib/features/notifications/`) y promociones push con Firebase Cloud Messaging (`web/firebase-messaging-sw.js`, `firebase-admin-setup/enviar_promo.js`) |
 | Elementos físicos del dispositivo | GPS: botón **Usar mi ubicación** en el pago (`lib/data/services/location_service.dart`) |
 | Instalación | `web/manifest.json` con íconos, capturas y accesos directos |
+| Cuentas | Firebase Authentication con correo y contraseña y recuperación por correo (`lib/data/repositories/firebase_auth_repository.dart`) |
+| API de terceros | Nominatim de OpenStreetMap: convierte el punto del GPS en calle y colonia (`lib/data/services/address_lookup_service.dart`) |
+
+## Seguridad
+
+- Las contraseñas las guarda Firebase Authentication (cifradas con scrypt);
+  la aplicación nunca las almacena. Al registrarse se piden 8 caracteres
+  con letras y números.
+- Los mensajes de error no dicen si un correo tiene cuenta, y Firebase
+  bloquea por unos minutos tras muchos intentos fallidos.
+- `firestore.rules`: el menú es solo de lectura; el perfil, los pedidos y
+  los dispositivos de `usuarios/{uid}` solo los lee y escribe el dueño de
+  la cuenta, con validación de campos y tamaños.
+- Todo viaja por HTTPS (Firebase Hosting). La llave de servicio queda fuera
+  del repositorio (`.gitignore`).
 
 ## Ejecutar
 
@@ -28,7 +43,7 @@ flutter run -d chrome
 ```
 
 Cuenta de demostración: botón **Usar cuenta de demostración** en el login
-(`demo@pizzago.com` / `pizzago123`, solo existe en local).
+(`demo@pizzago.com` / `pizzago123`, registrada en Firebase y en los datos locales).
 
 Cupones de prueba: `PIZZAGO10` (10 %) y `BIENVENIDA` ($50, solo el primer pedido).
 
@@ -66,7 +81,7 @@ lib/
 ├── data/
 │   ├── models/         Pizza, CartItem, Coupon, PizzaOrder, DeliveryLocation, Promo, AppUser
 │   ├── repositories/   menú, sesión y pedidos: versiones locales, de Firestore y combinadas
-│   └── services/       ubicación GPS y push de Cloud Messaging
+│   └── services/       ubicación GPS, dirección con OpenStreetMap y push de Cloud Messaging
 └── features/
     ├── auth/           auth_controller · screens/ (splash, login, registro) · widgets/
     ├── menu/           catalog_controller · screens/ (inicio, detalle) · widgets/

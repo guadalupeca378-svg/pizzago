@@ -37,6 +37,21 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!ok && mounted) showAuthError(context, auth.error);
   }
 
+  /// Manda el enlace para cambiar la contraseña al correo escrito.
+  Future<void> _forgotPassword() async {
+    final messenger = ScaffoldMessenger.of(context);
+    final email = _email.text.trim();
+    final invalid = Validators.email(email);
+    if (invalid != null) {
+      messenger.showSnackBar(const SnackBar(content: Text('Escribe tu correo para mandarte el enlace.')));
+      return;
+    }
+    final error = await context.read<AuthController>().sendPasswordReset(email);
+    messenger.showSnackBar(
+      SnackBar(content: Text(error ?? 'Si la cuenta existe, te llegará un correo para cambiar tu contraseña.')),
+    );
+  }
+
   void _fillDemo() {
     _email.text = LocalAuthRepository.demoEmail;
     _password.text = LocalAuthRepository.demoPassword;
@@ -63,7 +78,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 onSubmitted: (_) => _submit(),
                 autofillHints: const [AutofillHints.password],
               ),
-              const SizedBox(height: 24),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(onPressed: _forgotPassword, child: const Text('¿Olvidaste tu contraseña?')),
+              ),
+              const SizedBox(height: 8),
               SubmitButton(label: 'Iniciar sesión', onPressed: _submit),
               const SizedBox(height: 8),
               TextButton.icon(

@@ -35,6 +35,16 @@ class AuthController extends ChangeNotifier {
   Future<bool> register({required String name, required String email, required String password}) =>
       _authenticate(() => _repository.register(name: name, email: email, password: password));
 
+  /// Pide el correo para cambiar la contraseña. Devuelve el error, o null si se mandó.
+  Future<String?> sendPasswordReset(String email) async {
+    try {
+      await _repository.sendPasswordReset(email);
+      return null;
+    } on AuthException catch (e) {
+      return e.message;
+    }
+  }
+
   Future<void> signOut() async {
     await _repository.signOut();
     _user = null;

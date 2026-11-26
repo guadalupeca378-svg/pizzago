@@ -14,12 +14,15 @@ class AuthException implements Exception {
 }
 
 /// Contrato de autenticación. La versión local sirve para desarrollar y
-/// probar sin backend; `FirebaseAuthRepository` lo implementará después con
-/// `firebase_auth` sin tocar pantallas ni controladores.
+/// probar sin backend; `FirebaseAuthRepository` lo implementa con Firebase
+/// Authentication sin tocar pantallas ni controladores.
 abstract interface class AuthRepository {
   Future<AppUser?> restoreSession();
   Future<AppUser> signIn({required String email, required String password});
   Future<AppUser> register({required String name, required String email, required String password});
+
+  /// Manda al correo un enlace para elegir una contraseña nueva.
+  Future<void> sendPasswordReset(String email);
   Future<void> signOut();
   Future<AppUser> updateProfile(AppUser user);
 }
@@ -98,6 +101,11 @@ class LocalAuthRepository implements AuthRepository {
     await _writeUsers(users);
     await _prefs.setString(_sessionKey, key);
     return user;
+  }
+
+  @override
+  Future<void> sendPasswordReset(String email) async {
+    throw const AuthException('Sin conexión a Firebase no se puede recuperar la contraseña.');
   }
 
   @override
