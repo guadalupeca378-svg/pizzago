@@ -13,16 +13,32 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Datos de cada navegador, identificado con su sesión anónima de Firebase.
+    // Datos de cada cliente, identificado con su cuenta de Firebase Authentication.
     match /usuarios/{uid} {
       function esDueno() {
-        return request.auth != null && request.auth.uid == uid;
+        return request.auth != null
+          && request.auth.token.firebase.sign_in_provider == 'password'
+          && request.auth.uid == uid;
       }
+
+      // Perfil: nombre, correo de la cuenta, teléfono y dirección.
+      allow read: if esDueno();
+      allow create, update: if esDueno()
+        && request.resource.data.keys().hasOnly(['name', 'email', 'phone', 'address', 'creado'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() <= 80
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.phone is string
+        && request.resource.data.phone.size() <= 15
+        && request.resource.data.address is string
+        && request.resource.data.address.size() <= 200;
+      allow delete: if false;
 
       match /pedidos/{pedido} {
         allow read: if esDueno();
         allow create, update: if esDueno()
           && request.resource.data.id == pedido
+          && request.resource.data.userId == uid
           && request.resource.data.total is number
           && request.resource.data.total >= 0
           && request.resource.data.items is list

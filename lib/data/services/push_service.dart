@@ -42,7 +42,7 @@ class FcmPushService implements PushService {
       // El token tiene la forma "<FID>:<resto>".
       onTimeout: () => token?.split(':').first ?? (throw TimeoutException('Sin identificador de Cloud Messaging')),
     );
-    final user = _auth.currentUser ?? (await _auth.signInAnonymously()).user!;
+    final user = _auth.currentUser ?? (throw StateError('Sin sesión iniciada'));
     await _db.collection('usuarios').doc(user.uid).collection('dispositivos').doc(fid).set({
       'fid': fid,
       'token': ?token,
@@ -62,7 +62,6 @@ class FcmPushService implements PushService {
   }
 
   @override
-  Stream<(String, String)> get foregroundMessages => FirebaseMessaging.onMessage.map(
-    (m) => (m.notification?.title ?? 'PizzaGo', m.notification?.body ?? ''),
-  );
+  Stream<(String, String)> get foregroundMessages =>
+      FirebaseMessaging.onMessage.map((m) => (m.notification?.title ?? 'PizzaGo', m.notification?.body ?? ''));
 }

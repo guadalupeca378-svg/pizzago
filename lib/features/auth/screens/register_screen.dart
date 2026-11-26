@@ -66,7 +66,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               PasswordField(
                 controller: _password,
                 label: 'Contraseña',
-                validator: Validators.password,
+                validator: Validators.newPassword,
                 autofillHints: const [AutofillHints.newPassword],
               ),
               const SizedBox(height: 16),

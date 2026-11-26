@@ -24,6 +24,16 @@ abstract final class Validators {
     return value.length < 6 ? 'Mínimo 6 caracteres' : null;
   }
 
+  /// Contraseña al crear la cuenta: 8 caracteres o más, con letras y números.
+  static String? newPassword(String? value) {
+    if (value == null || value.isEmpty) return 'La contraseña es obligatoria';
+    if (value.length < 8) return 'Mínimo 8 caracteres';
+    if (!RegExp(r'[A-Za-zÁÉÍÓÚÑáéíóúñ]').hasMatch(value) || !RegExp(r'\d').hasMatch(value)) {
+      return 'Usa letras y números';
+    }
+    return null;
+  }
+
   static String? phone(String? value) {
     final error = required(value, 'El teléfono');
     if (error != null) return error;

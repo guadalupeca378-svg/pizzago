@@ -29,16 +29,16 @@ class FirestoreMenuRepository implements MenuRepository {
   }
 }
 
-/// Copia de los pedidos en `usuarios/{uid}/pedidos/{id}`. El uid es el de una
-/// sesión anónima de Firebase: las reglas solo dejan a cada navegador leer y
-/// escribir sus propios pedidos.
+/// Copia de los pedidos en `usuarios/{uid}/pedidos/{id}`. El uid es el de la
+/// cuenta de Firebase Authentication: las reglas solo dejan a cada cliente
+/// leer y escribir sus propios pedidos.
 class FirestoreOrderStore implements RemoteOrderStore {
   FirestoreOrderStore(this._db, this._auth);
 
   final FirebaseFirestore _db;
   final FirebaseAuth _auth;
 
-  Future<String> _uid() async => (_auth.currentUser ?? (await _auth.signInAnonymously()).user!).uid;
+  Future<String> _uid() async => (_auth.currentUser ?? (throw StateError('Sin sesión iniciada'))).uid;
 
   Future<CollectionReference<Map<String, dynamic>>> _orders() async =>
       _db.collection('usuarios').doc(await _uid()).collection('pedidos');
