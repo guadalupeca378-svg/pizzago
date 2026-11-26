@@ -53,7 +53,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       setState(() => _address.text = found);
       messenger.showSnackBar(
         SnackBar(
-          content: Text('Dirección de tu ubicación: $found'),
+          // Los datos de OpenStreetMap piden mostrar su crédito (licencia ODbL).
+          content: Text('Dirección de tu ubicación: $found\nDatos © colaboradores de OpenStreetMap'),
           action: previous.trim().isEmpty
               ? null
               : SnackBarAction(label: 'Deshacer', onPressed: () => setState(() => _address.text = previous)),
